@@ -109,18 +109,18 @@
       }
 
       function showNextPlayer() {
-        clearMarkers();
-        if ((teams[currentTeamIndex].players.length + 1) >= currentPlayerIndex) {
+        currentPlayerIndex++;
+
+        if (teams[currentTeamIndex].players.length >= currentPlayerIndex) {
+          currentTeamIndex++;
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
-          if ((teams.length + 1) >= currentTeamIndex) {
+          if (teams.length >= currentTeamIndex) {
             currentTeamIndex = 0;
-          } else {
-            currentTeamIndex++;
           }
-        } else {
-          currentPlayerIndex++;
         }
+
+        clearMarkers();
         addMarker(teams[currentTeamIndex].players[currentPlayerIndex].loc);
       }
 
