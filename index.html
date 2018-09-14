@@ -110,10 +110,10 @@
 
       function showNextPlayer() {
         clearMarkers();
-        if ((count(teams[currentTeamIndex].players) + 1) >= currentPlayerIndex) {
+        if ((teams[currentTeamIndex].players.length + 1) >= currentPlayerIndex) {
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
-          if (count(teams) + 1) >= currentTeamIndex) {
+          if (teams.length + 1) >= currentTeamIndex) {
             currentTeamIndex = 0;
           } else {
             currentTeamIndex++;
