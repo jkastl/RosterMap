@@ -177,9 +177,9 @@
       }
 
       function drop(team) {
-        clearMarkers();
         for (var i = 0; i < team.players.length; i++) {
           addMarkerWithTimeout(team.players[i].loc, i * 200);
+          clearMarkers();
         }
       }
 
