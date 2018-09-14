@@ -34,9 +34,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.min.js"></script>
     <script>
+      
+      var currentTeamIndex = 0;
+      var currentPlayerIndex = 0;
 
-      var teams = {
-        0: {
+      var teams = [
+        {
           name: "Class of 1997",
           picUrl: "http://via.placeholder.com/150/285739/000000",
           players: [
@@ -62,7 +65,7 @@
             }
           ]
         },
-        1: {
+        {
           name: "Class of 1995",
           picUrl: "http://via.placeholder.com/150/d38ea7/000000",
           players: [
@@ -105,22 +108,34 @@
         return blob;
       }
 
+      function showNextPlayer() {
+        clearMarkers();
+        if ((count(teams[currentTeamIndex].players) + 1) >= currentPlayerIndex) {
+          $('#carousel').slick('slickNext');
+          currentPlayerIndex = 0;
+          if (count(teams) + 1) >= currentTeamIndex) {
+            currentTeamIndex = 0;
+          } else {
+            currentTeamIndex++;
+          }
+        } else {
+          currentPlayerIndex++;
+        }
+        addMarker(teams[currentTeamIndex][currentPlayerIndex].loc);
+      }
+
       $(document).ready(function() {
         $('#carousel').slick({
           arrows: false,
           pauseOnFocus: false,
-          pauseOnHover: true,
-          autoplay: true,
-          autoplaySpeed: 2000,
+          pauseOnHover: false
         });
-
-        $('#carousel').on('afterChange', function(event, slick, currentSlide, nextSlide){
-          drop(teams[currentSlide]);
-        });
-
-        $.each(teams, function(i, team) {
+        
+        $.each(teams, function(teamIndex, team) {
           $('#carousel').slick('slickAdd',"<div>"+buildTeamCarousel(team)+"</div>");
         });
+        
+        setInterval(showNextPlayer, 3000);
       });
 
       var markers = [];
@@ -182,15 +197,19 @@
           clearMarkers();
         }
       }
+      
+      function addMarker(position) {
+        markers.push(new google.maps.Marker({
+          position: position,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          map_icon_label: '<span class="map-icon map-icon-tennis"></span>',
+        }));
+      }
 
       function addMarkerWithTimeout(position, timeout) {
         window.setTimeout(function() {
-          markers.push(new google.maps.Marker({
-            position: position,
-            map: map,
-            animation: google.maps.Animation.DROP,
-            map_icon_label: '<span class="map-icon map-icon-tennis"></span>',
-          }));
+          addMarker(position);
         }, timeout);
       }
 
