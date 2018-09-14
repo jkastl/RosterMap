@@ -111,11 +111,11 @@
       function showNextPlayer() {
         currentPlayerIndex++;
 
-        if (teams[currentTeamIndex].players.length >= currentPlayerIndex) {
+        if (currentPlayerIndex >= teams[currentTeamIndex].players.length) {
           currentTeamIndex++;
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
-          if (teams.length >= currentTeamIndex) {
+          if (currentTeamIndex >= teams.length) {
             currentTeamIndex = 0;
           }
         }
