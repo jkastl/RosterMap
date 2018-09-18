@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Player Map</title>
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.min.css" />
     <style>
       /* Always set the map height explicitly to define the size of the div
@@ -96,10 +97,10 @@
       ];
 
       function buildTeamCarousel(team) {
-        var blob = "<div data-team-name='"+team.name+"'>";
-        blob += "<h3>"+team.name+"</h3>";
+        var blob = "<div>";
+        blob += "<h1>"+team.name+"</h1>";
         blob += "<img src='"+team.picUrl+"'>";
-        blob += "<h4><u>Players</u></h3>";
+        blob += "<h4><u>Players</u></h4>";
         blob += "<ul>";
         $.each(team.players, function(i, player){
           blob += "<li><h5>"+player.name+"</h5></li>";
@@ -222,8 +223,6 @@
         markers = [];
       }
     </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ&callback=initMap">
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ&callback=initMap"></script>
   </body>
 </html>
