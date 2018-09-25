@@ -54,6 +54,14 @@
               if (teams.length > 0) {
                 for(var teamIndex = 0; teamIndex <= teams.count; teamIndex++) {
                   if (teams[teamIndex].name.toLowerCase() === teamName.toLowerCase()) {
+                    teams[teamIndex].members.push({
+                      name: rawPlayerData[playerIndex][1],
+                      school: rawPlayerData[playerIndex][2],
+                      loc: {
+                        lat: rawPlayerData[playerIndex][3],
+                        lng: rawPlayerData[playerIndex][4]
+                      }
+                    });
                     teamFound = true;
                     break;
                   }
@@ -63,18 +71,16 @@
               if (!teamFound) {
                 teams.push({
                   name: teamName,
-                  members: []
+                  members: [{
+                    name: rawPlayerData[playerIndex][1],
+                    school: rawPlayerData[playerIndex][2],
+                    loc: {
+                      lat: rawPlayerData[playerIndex][3],
+                      lng: rawPlayerData[playerIndex][4]
+                    }
+                  }]
                 });
               }
-              
-              teams[teamName]["members"].push({
-                name: rawPlayerData[i][1],
-                school: rawPlayerData[i][2],
-                loc: {
-                  lat: rawPlayerData[i][3],
-                  lng: rawPlayerData[i][4]
-                }
-              });
             }
           }
         }
