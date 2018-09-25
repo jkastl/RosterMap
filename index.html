@@ -82,6 +82,10 @@
                 });
               }
             }
+            
+            $.each(teams, function(teamIndex, team) {
+              $('#carousel').slick('slickAdd',"<div>"+buildCarouselPage(team)+"</div>");
+            });
           }
         }
       });
@@ -122,10 +126,6 @@
           arrows: false,
           pauseOnFocus: false,
           pauseOnHover: false
-        });
-        
-        $.each(teams, function(teamIndex, team) {
-          $('#carousel').slick('slickAdd',"<div>"+buildCarouselPage(team)+"</div>");
         });
         
         setInterval(showNextPlayer, 3000);
