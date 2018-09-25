@@ -38,20 +38,25 @@
       
       var currentTeamIndex = 0;
       var currentPlayerIndex = 0;
-      var teams = [];
+      var teams = {};
       
       $.ajax({
         url: 'https://sheets.googleapis.com/v4/spreadsheets/1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c/values/Sheet1!A:E?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ',
         success: function (rawPlayerData) {
           if (rawPlayerData.values && rawPlayerData.values.length > 1) {
-            teams = {};
             rawPlayerData = rawPlayerData.values;
             rawPlayerData.shift(); // remove header row
             for (var i = 0; i < rawPlayerData.length; i++) {
               var groupName = rawPlayerData[i][0]; // grouping in first column
-              if (!teams.groupName) {
-                teams[groupName] = {};
+              if (teams[groupName] === undefined) {
+                teams[groupName] = [];
               }
+              teams[groupName].push({
+                name:rawPlayerData[i][1],
+                school:rawPlayerData[i][2],
+                lat:rawPlayerData[i][3],
+                long:rawPlayerData[i][4]
+              });
             }
           }
         }
