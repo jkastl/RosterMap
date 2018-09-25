@@ -38,7 +38,7 @@
       
       var currentTeamIndex = 0;
       var currentPlayerIndex = 0;
-      var teams = {};
+      var teams = [];
       
       $.ajax({
         url: 'https://sheets.googleapis.com/v4/spreadsheets/1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c/values/Sheet1!A:E?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ',
@@ -46,19 +46,33 @@
           if (rawPlayerData.values && rawPlayerData.values.length > 1) {
             rawPlayerData = rawPlayerData.values;
             rawPlayerData.shift(); // remove header row
-            for (var i = 0; i < rawPlayerData.length; i++) {
-              var groupName = rawPlayerData[i][0]; // grouping in first column
+            for (var playerIndex = 0; playerIndex < rawPlayerData.length; playerIndex++) {
+              var teamName = rawPlayerData[playerIndex][0]; // grouping in column 0
+              var teamFound = false;
               
-              if (teams[groupName] === undefined) {
-                teams[groupName] = [];
+              // check if team name exists
+              if (teams.length > 0) {
+                for(var teamIndex = 0; teamIndex <= teams.count; teamIndex++) {
+                  if (teams[teamIndex].name.toLowerCase() === teamName.toLowerCase()) {
+                    teamFound = true;
+                    break;
+                  }
+                }
               }
               
-              teams[groupName].push({
-                name:rawPlayerData[i][1],
-                school:rawPlayerData[i][2],
+              if (!teamFound) {
+                teams.push({
+                  name: teamName,
+                  members: []
+                });
+              }
+              
+              teams[teamName]["members"].push({
+                name: rawPlayerData[i][1],
+                school: rawPlayerData[i][2],
                 loc: {
-                  lat:rawPlayerData[i][3],
-                  lng:rawPlayerData[i][4]
+                  lat: rawPlayerData[i][3],
+                  lng: rawPlayerData[i][4]
                 }
               });
             }
@@ -71,8 +85,9 @@
         blob += "<h1>"+team.name+"</h1>";
         blob += "<h4><u>Players</u></h4>";
         blob += "<ul>";
-        $.each(team.players, function(i, player){
-          blob += "<li><h5>"+player.name+"</h5></li>";
+        $.each(team.members, function(i, member){
+          blob += "<li><h5>"+member.name+"</h5></li>";
+          blob += "<li><h6>"+member.school+"</h6></li>";
         });
         blob += "</ul>";
         blob += "</div>";
@@ -83,7 +98,7 @@
       function showNextPlayer() {
         currentPlayerIndex++;
 
-        if (currentPlayerIndex >= teams[currentTeamIndex].players.length) {
+        if (currentPlayerIndex >= teams[currentTeamIndex].members.length) {
           currentTeamIndex++;
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
@@ -93,7 +108,7 @@
         }
 
         clearMarkers();
-        addMarker(teams[currentTeamIndex].players[currentPlayerIndex].loc);
+        addMarker(teams[currentTeamIndex].members[currentPlayerIndex].loc);
       }
 
       $(document).ready(function() {
