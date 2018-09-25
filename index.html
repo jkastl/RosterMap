@@ -48,11 +48,12 @@
             rawPlayerData.shift(); // remove header row
             for (var playerIndex = 0; playerIndex < rawPlayerData.length; playerIndex++) {
               var teamName = rawPlayerData[playerIndex][0]; // grouping in column 0
+              console.log(teamName);
               var teamFound = false;
               
               // check if team name exists
               if (teams.length > 0) {
-                for(var teamIndex = 0; teamIndex <= teams.count; teamIndex++) {
+                for(var teamIndex = 0; teamIndex <= teams.length; teamIndex++) {
                   if (teams[teamIndex].name.toLowerCase() === teamName.toLowerCase()) {
                     teams[teamIndex].members.push({
                       name: rawPlayerData[playerIndex][1],
