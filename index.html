@@ -48,79 +48,27 @@
             rawPlayerData.shift(); // remove header row
             for (var i = 0; i < rawPlayerData.length; i++) {
               var groupName = rawPlayerData[i][0]; // grouping in first column
+              
               if (teams[groupName] === undefined) {
                 teams[groupName] = [];
               }
+              
               teams[groupName].push({
                 name:rawPlayerData[i][1],
                 school:rawPlayerData[i][2],
-                lat:rawPlayerData[i][3],
-                long:rawPlayerData[i][4]
+                loc: {
+                  lat:rawPlayerData[i][3],
+                  lng:rawPlayerData[i][4]
+                }
               });
             }
           }
         }
       });
 
-      teams = [
-        {
-          name: "Class of 1997",
-          picUrl: "http://via.placeholder.com/150/285739/000000",
-          players: [
-            {
-              name: "player1",
-              loc: {lat: 41.7, lng: -90.18}
-            },
-            {
-              name: "player2",
-              loc: {lat: 43.07, lng: -85.01}
-            },
-            {
-              name: "player3",
-              loc: {lat: 47.59, lng: -99.56}
-            },
-            {
-              name: "player4",
-              loc: {lat: 40.56, lng: -93.44}
-            },
-            {
-              name: "player5",
-              loc: {lat: 41.3, lng: -97.3}
-            }
-          ]
-        },
-        {
-          name: "Class of 1995",
-          picUrl: "http://via.placeholder.com/150/d38ea7/000000",
-          players: [
-            {
-              name: "player11",
-              loc: {lat: 38.7, lng: -90.18}
-            },
-            {
-              name: "player12",
-              loc: {lat: 41.07, lng: -87.01}
-            },
-            {
-              name: "player13",
-              loc: {lat: 49.59, lng: -98.56}
-            },
-            {
-              name: "player14",
-              loc: {lat: 40.56, lng: -93.44}
-            },
-            {
-              name: "player15",
-              loc: {lat: 45.3, lng: -95.3}
-            }
-          ]
-        }
-      ];
-
-      function buildTeamCarousel(team) {
+      function buildCarouselPage(team) {
         var blob = "<div>";
         blob += "<h1>"+team.name+"</h1>";
-        blob += "<img src='"+team.picUrl+"'>";
         blob += "<h4><u>Players</u></h4>";
         blob += "<ul>";
         $.each(team.players, function(i, player){
@@ -156,7 +104,7 @@
         });
         
         $.each(teams, function(teamIndex, team) {
-          $('#carousel').slick('slickAdd',"<div>"+buildTeamCarousel(team)+"</div>");
+          $('#carousel').slick('slickAdd',"<div>"+buildCarouselPage(team)+"</div>");
         });
         
         setInterval(showNextPlayer, 3000);
