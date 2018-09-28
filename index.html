@@ -97,7 +97,8 @@
         blob += '<hr/>';
         blob += '<ul class="list-group">';
         $.each(team.members, function(i, member){
-          blob += '<li class="ml-2 list-group-item active"><h4>'+member.name+'</h4></li>';
+          var activePlayer = i === 0;
+          blob += '<li class="ml-2 list-group-item' + (active ? ' active' : '') + '"><h4>'+member.name+'</h4></li>';
           blob += '<li class="ml-2 list-group-item"><h6>'+member.school+'</h6></li>';
         });
         blob += '</ul>';
