@@ -91,14 +91,14 @@
       });
 
       function buildCarouselPage(team) {
-        var blob = "<div>";
+        var blob = '<div>';
         blob += '<h1 class="text-center">'+team.name+'</h1>';
         blob += '<div>';
         blob += '<hr/>';
-        blob += '<ul>';
+        blob += '<ul class="list-group">';
         $.each(team.members, function(i, member){
-          blob += '<li class="ml-3"><h4>'+member.name+'</h4></li>';
-          blob += '<li class="ml-4"><h6>'+member.school+'</h6></li>';
+          blob += '<li class="ml-2 list-group-item active"><h4>'+member.name+'</h4></li>';
+          blob += '<li class="ml-2 list-group-item"><h6>'+member.school+'</h6></li>';
         });
         blob += '</ul>';
         blob += '</div>';
