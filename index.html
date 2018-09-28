@@ -6,14 +6,12 @@
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.min.css" />
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
+      /* Always set the map height explicitly to define the size of the div element that contains the map. */
       #map {
         width: 79%;
         height: 100%;
         display: inline-block;
       }
-      /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
@@ -23,6 +21,10 @@
         display: inline-block;
         width: 20%;
         vertical-align: top;
+      }
+      #nav-panel .list-group-item.active {
+        color: #212529;
+        background-color: #ccc;
       }
     </style>
   </head>
@@ -55,6 +57,7 @@
                 for(var teamIndex = 0; teamIndex < teams.length; teamIndex++) {
                   if (teams[teamIndex].name.toLowerCase() === teamName.toLowerCase()) {
                     teams[teamIndex].members.push({
+                      id: teamIndex.toString() + '-' + playerIndex.toString(),
                       name: rawPlayerData[playerIndex][1],
                       school: rawPlayerData[playerIndex][2],
                       loc: {
@@ -72,6 +75,7 @@
                 teams.push({
                   name: teamName,
                   members: [{
+                    id: teamIndex.toString() + '-0',
                     name: rawPlayerData[playerIndex][1],
                     school: rawPlayerData[playerIndex][2],
                     loc: {
@@ -97,14 +101,19 @@
         blob += '<hr/>';
         blob += '<ul class="list-group">';
         $.each(team.members, function(i, member){
-          blob += '<li class="ml-2 list-group-item' + (i === 0 ? ' active' : '') + '"><h4>'+member.name+'</h4></li>';
-          blob += '<li class="ml-2 list-group-item"><h6>'+member.school+'</h6></li>';
+          blob += '<li id=player-"' + member.id + '" class="ml-2 list-group-item"><h4>'+member.name+'</h4></li>';
+          blob += '<li id=player-"' + member.id + '" class="ml-2 list-group-item"><h6>'+member.school+'</h6></li>';
         });
         blob += '</ul>';
         blob += '</div>';
         blob += '</div>';
 
         return blob;
+      }
+      
+      function setActive(playerId) {
+        $('ul .list-group-item.active').removeClass('active');
+        $('#player-' + playerId).addClass('active');
       }
 
       function showNextPlayer() {
@@ -120,6 +129,7 @@
         }
 
         clearMarkers();
+        setActive(teams[currentTeamIndex].members[currentPlayerIndex].id);
         addMarker(teams[currentTeamIndex].members[currentPlayerIndex].loc);
       }
 
