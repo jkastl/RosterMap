@@ -93,13 +93,15 @@
       function buildCarouselPage(team) {
         var blob = "<div>";
         blob += '<h1 class="text-center">'+team.name+'</h1>';
-        blob += '<h4><u>Players</u></h4>';
+        blob += '<div>';
+        blob += '<hr/>';
         blob += '<ul>';
         $.each(team.members, function(i, member){
-          blob += '<li><h5>'+member.name+'</h5></li>';
-          blob += '<li><h6>'+member.school+'</h6></li>';
+          blob += '<li class="ml-3"><h4>'+member.name+'</h4></li>';
+          blob += '<li class="ml-4"><h6>'+member.school+'</h6></li>';
         });
         blob += '</ul>';
+        blob += '</div>';
         blob += '</div>';
 
         return blob;
