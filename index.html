@@ -44,12 +44,10 @@
         url: 'https://sheets.googleapis.com/v4/spreadsheets/1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c/values/Sheet1!A:E?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ',
         success: function (rawPlayerData) {
           if (rawPlayerData.values && rawPlayerData.values.length > 1) {
-            debugger;
             rawPlayerData = rawPlayerData.values;
             rawPlayerData.shift(); // remove header row
             for (var playerIndex = 0; playerIndex < rawPlayerData.length; playerIndex++) {
               var teamName = rawPlayerData[playerIndex][0]; // grouping in column 0
-              console.log(teamName);
               var teamFound = false;
               
               // check if team name exists
