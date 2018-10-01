@@ -103,7 +103,7 @@
         $.each(team.members, function(i, member){
           blob += '<li data-player-id="' + member.id + '" class="ml-2 list-group-item">';
           blob += '<h4>'+member.name+'</h4>';
-          blob += '<h6>'+member.school+'</h6>';
+          blob += '<h6 class="mb-0 text-right">'+member.school+'</h6>';
           blob += '</li>';
         });
         blob += '</ul>';
