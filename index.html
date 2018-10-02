@@ -22,13 +22,9 @@
         width: 20%;
         vertical-align: top;
       }
-      #nav-panel .list-group-item {
-        border-color: #212529;
-      }
       #nav-panel .list-group-item.active {
         color: #212529;
         background-color: #ccc;
-        border-color: #212529;
       }
     </style>
   </head>
@@ -106,7 +102,7 @@
         blob += '<div>';
         blob += '<ul class="list-group">';
         $.each(team.members, function(i, member){
-          blob += '<li data-player-id="' + member.id + '" class="ml-1 list-group-item">';
+          blob += '<li data-player-id="' + member.id + '" class="ml-1 list-group-item border-dark">';
           blob += '<h5>'+member.name+'</h5>';
           blob += '<h6 class="mb-0 text-right">'+member.school+'</h6>';
           blob += '</li>';
