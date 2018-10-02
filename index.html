@@ -45,6 +45,7 @@
       var currentTeamIndex = 0;
       var currentPlayerIndex = 0;
       var teams = [];
+      var playerInterval = 3000;
       
       $.ajax({
         url: 'https://sheets.googleapis.com/v4/spreadsheets/1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c/values/Sheet1!A:E?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ',
@@ -127,6 +128,7 @@
 
         if (currentPlayerIndex >= teams[currentTeamIndex].members.length) {
           currentTeamIndex++;
+          clearMarkers();
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
           if (currentTeamIndex >= teams.length) {
@@ -134,7 +136,6 @@
           }
         }
 
-        clearMarkers();
         setActive(teams[currentTeamIndex].members[currentPlayerIndex].id);
         addMarker(teams[currentTeamIndex].members[currentPlayerIndex].loc);
       }
@@ -146,7 +147,7 @@
           pauseOnHover: false
         });
         
-        setInterval(showNextPlayer, 3000);
+        setInterval(showNextPlayer, playerInterval);
       });
 
       var markers = [];
