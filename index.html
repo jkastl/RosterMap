@@ -3,25 +3,68 @@
   <head>
     <meta charset="utf-8">
     <title>Player Map</title>
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
     <style>
-      /* Always set the map height explicitly to define the size of the div element that contains the map. */
-      #map {
+      html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,pre,a,em,img,s,samp,small,strike,strong,sub,sup,b,u,i,dl,dt,dd,ol,ul,li,fieldset,form,label,table,caption,tbody,tfoot,thead,tr,th,td,footer,header,menu,nav,output,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}footer,header,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}table{border-collapse:collapse;border-spacing:0}div:focus,div:active,div:hover{outline:0;}
+      html, body {
         height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto Condensed', sans-serif;
       }
-      #nav-panel .list-group-item.active {
+      h1 {
+        font-size: 3rem;
+        text-align: center;
+        border-bottom: 1px solid black;
+        margin: 6px 8px 8px;
+        padding-bottom: 6px;
+      }
+      h2 {
+        font-size: 2rem;
+        margin: 8px;
+      }
+      h5 {
+        font-size: 1.4rem;
+      }
+      h6 {
+        text-align: right;
+        font-size: 1.2rem;
+        color: #333;
+        font-style: italic;
+      }
+      ul {
+        padding: 0 8px;
+      }
+      li {
+        padding: 4px;
+        transition: all 0.5s ease-in-out;
+        border: 1px solid #eee;
+      }
+      #map {
+        width: 80%;
+        height: 100%;
+        display: inline-block;
+      }
+      #nav {
+        display: inline-block;
+        width: 20%;
+        height: 100%;
+        vertical-align: top;
+        background-color: #eee;
+      }
+      #nav .active {
         color: #212529;
         background-color: #ccc;
+        border-color: #888;
+        border-radius: 5px;
       }
     </style>
   </head>
   <body>
-    <div class="row no-gutters">
-      <div id="map" class="col-sm-10"></div>
-      <div id="nav-panel" class="col-sm-2">
-        <div id="carousel"></div>
-      </div>
+    <div id="map"></div><!-- leave comment, used for whitespace management
+    --><div id="nav">
+      <div id="carousel"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.min.js"></script>
@@ -31,9 +74,13 @@
       var currentPlayerIndex = 0;
       var teams = [];
       var playerInterval = 3000;
+      var intervalID;
+      var totalPlayerCount = 0;
+      var sheetId = '1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c';
+      var key = 'AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ';
       
       $.ajax({
-        url: 'https://sheets.googleapis.com/v4/spreadsheets/1aIyvX4Lhh8iH8PdhcH9QnQd2pYHTTV4I09ZvzzywL7c/values/Sheet1!A:E?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ',
+        url: 'https://sheets.googleapis.com/v4/spreadsheets/' + sheetId + '/values/Sheet1!A:E?key=' + key,
         success: function (rawPlayerData) {
           if (rawPlayerData.values && rawPlayerData.values.length > 1) {
             rawPlayerData = rawPlayerData.values;
@@ -51,8 +98,8 @@
                       name: rawPlayerData[playerIndex][1],
                       school: rawPlayerData[playerIndex][2],
                       loc: {
-                        lat: Number(scrubCoord(rawPlayerData[playerIndex][3])),
-                        lng: Number(scrubCoord(rawPlayerData[playerIndex][4]))
+                        lat: rawPlayerData[playerIndex][3] === undefined ? 0 : Number(scrubCoord(rawPlayerData[playerIndex][3])),
+                        lng: rawPlayerData[playerIndex][4] === undefined ? 0 : Number(scrubCoord(rawPlayerData[playerIndex][4]))
                       }
                     });
                     teamFound = true;
@@ -69,8 +116,8 @@
                     name: rawPlayerData[playerIndex][1],
                     school: rawPlayerData[playerIndex][2],
                     loc: {
-                      lat: Number(scrubCoord(rawPlayerData[playerIndex][3])),
-                      lng: Number(scrubCoord(rawPlayerData[playerIndex][4]))
+                      lat: rawPlayerData[playerIndex][3] === undefined ? 0 : Number(scrubCoord(rawPlayerData[playerIndex][3])),
+                      lng: rawPlayerData[playerIndex][4] === undefined ? 0 : Number(scrubCoord(rawPlayerData[playerIndex][4]))
                     }
                   }]
                 });
@@ -78,22 +125,27 @@
             }
             
             $.each(teams, function(teamIndex, team) {
-              $('#carousel').slick('slickAdd',"<div>"+buildCarouselPage(team)+"</div>");
+              $('#carousel').slick('slickAdd','<div>'+buildCarouselPage(team)+'</div>');
+              totalPlayerCount += team.members.length;
             });
+
+            showNextPlayer();
+            startInterval();
+
+            $('#carousel').slick('slickAdd','<div id="summary"><h1>Nebraska Elite Volleyball</h1><h2>' + (new Date().getFullYear() - 2001) + ' Years Active</h2><h2>Logo?</h2><h2>Other Stats?</h2><br><br><h1>Collegiate Alumnae</h1><h2>27 States</h2><h2>87 Schools</h2></div>');
           }
         }
       });
 
       function buildCarouselPage(team) {
         var blob = '<div>';
-        blob += '<h1 class="text-center mt-2 mb-0">'+team.name+'</h1>';
-        blob += '<hr class="ml-1 mt-1" />';
+        blob += '<h1>'+team.name+'</h1>';
         blob += '<div>';
-        blob += '<ul class="list-group">';
+        blob += '<ul>';
         $.each(team.members, function(i, member){
-          blob += '<li data-player-id="' + member.id + '" class="ml-1 list-group-item border-dark">';
+          blob += '<li data-player-id="' + member.id + '">';
           blob += '<h5>'+member.name+'</h5>';
-          blob += '<h6 class="mb-0 text-right">'+member.school+'</h6>';
+          blob += '<h6>'+member.school+'</h6>';
           blob += '</li>';
         });
         blob += '</ul>';
@@ -104,25 +156,53 @@
       }
       
       function setActive(playerId) {
-        $('ul .list-group-item.active').removeClass('active');
+        $('li.active').removeClass('active');
         $('ul [data-player-id="' + playerId + '"]').addClass('active');
       }
 
       function showNextPlayer() {
-        currentPlayerIndex++;
-
         if (currentPlayerIndex >= teams[currentTeamIndex].members.length) {
           currentTeamIndex++;
           clearMarkers();
           $('#carousel').slick('slickNext');
           currentPlayerIndex = 0;
-          if (currentTeamIndex >= teams.length) {
-            currentTeamIndex = 0;
-          }
         }
 
-        setActive(teams[currentTeamIndex].members[currentPlayerIndex].id);
-        addMarker(teams[currentTeamIndex].members[currentPlayerIndex].loc);
+        if (currentTeamIndex >= teams.length) {
+          clearInterval(intervalId);
+          var playerIndex = 0;
+          $.each(teams, function(i, team) {
+            $.each(team.members, function(j, player){
+              playerIndex++;
+              if (player.loc.lat !== 0 &&
+                  player.loc.lng !== 0) {
+                addMarkerWithTimeout(player.loc, playerIndex/totalPlayerCount*6000);
+                // addMarkerWithTimeout(player.loc, 7000-Math.pow(2, 8 * (playerIndex/totalPlayerCount - 1)) * 7000);
+              }
+            });
+          });
+
+          currentTeamIndex = 0;
+          currentPlayerIndex = 0;
+          window.setTimeout(function() { clearMarkers(); $('#carousel').slick('slickNext'); showNextPlayer(); startInterval(); }, 8000);
+        } else {
+          var dropDelay = 400;
+
+          if (teams[currentTeamIndex].members[currentPlayerIndex].loc.lat !== 0 &&
+              teams[currentTeamIndex].members[currentPlayerIndex].loc.lng !== 0) {
+            setActive(teams[currentTeamIndex].members[currentPlayerIndex].id);
+            addMarkerWithTimeout(teams[currentTeamIndex].members[currentPlayerIndex].loc, dropDelay);
+          } else {
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({'address': teams[currentTeamIndex].members[currentPlayerIndex].school}, function(results, status) {
+              if (status === 'OK') {
+                setActive(teams[currentTeamIndex].members[currentPlayerIndex].id);
+                addMarkerWithTimeout(results[0].geometry.location, dropDelay);
+              }
+            });
+          }
+          currentPlayerIndex++;
+        }
       }
 
       $(document).ready(function() {
@@ -131,9 +211,11 @@
           pauseOnFocus: false,
           pauseOnHover: false
         });
-        
-        setInterval(showNextPlayer, playerInterval);
       });
+
+      function startInterval() {
+        intervalId = setInterval(showNextPlayer, playerInterval);
+      }
       
       function scrubCoord(coord) {
         return coord.trim().replace(/[^0-9.-]/g, '');
@@ -190,28 +272,29 @@
             }
           ]
         });
-      }
 
-      function drop(team) {
-        for (var i = 0; i < team.players.length; i++) {
-          addMarkerWithTimeout(team.players[i].loc, i * 200);
-          clearMarkers();
-        }
+        resizeMap();
       }
       
       function addMarker(position) {
+        // https://thenounproject.com/term/map-marker/462/
+        var icon = {
+          url: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIxMjAwIiB2aWV3Qm94PSIwIDAgMTIwMCAxMjAwIj48Zz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAgNjAwKSBzY2FsZSgwLjY5IDAuNjkpIHJvdGF0ZSgwKSB0cmFuc2xhdGUoLTYwMCAtNjAwKSIgc3R5bGU9ImZpbGw6IzQ1MjM1OSI+PHN2ZyBmaWxsPSIjNDUyMzU5IiB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNTYuMDY4IDEwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgNTYuMDY4IDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTI4LjAzNCwwQzEyLjU1MiwwLDAsMTIuNTUyLDAsMjguMDM0UzI4LjAzNCwxMDAsMjguMDM0LDEwMHMyOC4wMzQtNTYuNDgzLDI4LjAzNC03MS45NjZTNDMuNTE3LDAsMjguMDM0LDB6DQoJIE0yOC4wMzQsNDAuNDc3Yy02Ljg3MSwwLTEyLjQ0Mi01LjU3Mi0xMi40NDItMTIuNDQyYzAtNi44NzIsNS41NzEtMTIuNDQyLDEyLjQ0Mi0xMi40NDJjNi44NzIsMCwxMi40NDIsNS41NywxMi40NDIsMTIuNDQyDQoJQzQwLjQ3NywzNC45MDUsMzQuOTA2LDQwLjQ3NywyOC4wMzQsNDAuNDc3eiI+PC9wYXRoPjwvc3ZnPjwvZz48L2c+PC9zdmc+",
+          scaledSize: new google.maps.Size(40, 40),
+          origin: new google.maps.Point(0,0),
+          anchor: new google.maps.Point(20,30)
+        }
+
         markers.push(new google.maps.Marker({
           position: position,
           map: map,
           animation: google.maps.Animation.DROP,
-          map_icon_label: '<span class="map-icon map-icon-tennis"></span>',
+          icon: icon
         }));
       }
 
       function addMarkerWithTimeout(position, timeout) {
-        window.setTimeout(function() {
-          addMarker(position);
-        }, timeout);
+        window.setTimeout(function() {addMarker(position);}, timeout);
       }
 
       function clearMarkers() {
@@ -220,6 +303,34 @@
         }
         markers = [];
       }
+
+      // google maps dynamic zoom/center to "USA"
+      function resizeMap() {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode( { 'address': 'USA'}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            map.fitBounds(results[0].geometry.viewport);
+          }
+        });
+      }
+
+      (function() {
+        window.addEventListener('resize', resizeThrottler, false);
+        var resizeTimeout;
+        function resizeThrottler() {
+          if ( !resizeTimeout ) {
+            resizeTimeout = setTimeout(function() {
+              resizeTimeout = null;
+              throttledResizeHandler();
+             }, 1500);
+          }
+        }
+
+        function throttledResizeHandler() {
+          resizeMap();
+        }
+      }());
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmV0HtcK0cUokKKgyuuRc246xXJ8j8leQ&callback=initMap"></script>
   </body>
